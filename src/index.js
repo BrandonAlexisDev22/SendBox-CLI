@@ -4,12 +4,14 @@ const inquirer = require("inquirer");
 const validator = require("validator");
 const prompt = inquirer.createPromptModule();
 const fs = require("node:fs");
+const path = require("path")
 
 function saveData(email, token) {
   const envContent = `EMAIL_USER=${email}\nTOKEN_USER=${token}`;
+  const envPath = path.join(__dirname,"../.env")
   fs.writeFileSync("../.env", envContent);
   console.log("Datos guardados correctamente");
-  require("dotenv").config({ path: "../.env" });
+  require("dotenv").config({path:envPath});
 }
 
 function sendEmail(transporter, receiver, subject, message_user) {
