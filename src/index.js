@@ -27,3 +27,53 @@ function sendEmail(transporter, receiver, subject, message_user) {
     }
   });
 }
+
+function main() {
+  prompt([
+    { type: "input", name: "email", message: "Introduce tu email: " },
+    {
+      type: "password",
+      name: "token",
+      message: "Introduce tu token de seguridad: ",
+    },
+  ]).then((answers) => {
+    saveData(answers.email, answers.token);
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.TOKEN_USER,
+      },
+    });
+    transporter
+      .verify()
+      .then(() => {
+        prompt([
+          {
+            type: "input",
+            name: "receiver",
+            message: "Introduce el email de destinatario: ",
+          },
+          { type: "input", name: "subject", message: "Introduce el asunto: " },
+          { type: "input", name: "message", message: "Introduce el mensaje: " },
+        ])
+          .then((answers) => {
+            sendEmail(transporter, answers.receiver, answers.subject, answers.message);
+          })
+          .catch((err) => {
+            console.log(
+              "Ha ocurrido un error en el envio del correo electronico",
+              err
+            );
+          });
+      })
+      .catch((err) => {
+        console.log(
+          "Ha ocurrido un error en la verificacion de los credenciales",
+          err
+        );
+      });
+  });
+}
+
+main();
