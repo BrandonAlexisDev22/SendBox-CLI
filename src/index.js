@@ -1,6 +1,7 @@
 require("dotenv").config(); // CARGAR VARIABLES DE ENTORNO
 const nodemailer = require("nodemailer");
 const inquirer = require("inquirer");
+const validator = require("validator");
 const prompt = inquirer.createPromptModule();
 const fs = require("node:fs");
 
@@ -37,6 +38,10 @@ function main() {
       message: "Introduce tu token de seguridad: ",
     },
   ]).then((answers) => {
+    if(!validator.isEmail(answers.email)) {
+        console.log("El email ingresado no es correcto");
+        return;
+    }
     saveData(answers.email, answers.token);
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -58,6 +63,10 @@ function main() {
           { type: "input", name: "message", message: "Introduce el mensaje: " },
         ])
           .then((answers) => {
+            if(!validator.isEmail(answers.receiver)) {
+                console.log("El email ingresado no es correcto");
+                return;
+            }
             sendEmail(transporter, answers.receiver, answers.subject, answers.message);
           })
           .catch((err) => {
