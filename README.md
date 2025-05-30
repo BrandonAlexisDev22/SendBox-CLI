@@ -2,6 +2,8 @@
 
 Herramienta de línea de comandos en Node.js para enviar correos electrónicos de forma rápida y sencilla usando Nodemailer.
 
+**Nota:** Este proyecto ha sido migrado a TypeScript para mayor seguridad y mantenibilidad.
+
 ## Características
 
 - Envío de correos electrónicos desde la terminal.
