@@ -1,20 +1,27 @@
-require("dotenv").config(); // CARGAR VARIABLES DE ENTORNO
-const nodemailer = require("nodemailer");
-const inquirer = require("inquirer");
-const validator = require("validator");
-const prompt = inquirer.createPromptModule();
-const fs = require("node:fs");
-const path = require("path")
+import * as dotenv from "dotenv";
+import nodemailer, { Transporter } from "nodemailer";
+import inquirer from "inquirer";
+import validator from "validator";
+import * as fs from "fs";
+import * as path from "path";
 
-function saveData(email, token) {
+dotenv.config();
+const prompt = inquirer.createPromptModule();
+
+function saveData(email: string, token: string): void {
   const envContent = `EMAIL_USER=${email}\nTOKEN_USER=${token}`;
-  const envPath = path.join(__dirname,"../.env")
-  fs.writeFileSync("../.env", envContent);
+  const envPath = path.join(__dirname, "../.env");
+  fs.writeFileSync(envPath, envContent);
   console.log("Datos guardados correctamente");
-  require("dotenv").config({path:envPath});
+  dotenv.config({ path: envPath });
 }
 
-function sendEmail(transporter, receiver, subject, message_user) {
+function sendEmail(
+  transporter: Transporter,
+  receiver: string,
+  subject: string,
+  message_user: string
+): void {
   const emailSender = process.env.EMAIL_USER;
   let mailOptions = {
     from: `${emailSender}`,
@@ -22,7 +29,7 @@ function sendEmail(transporter, receiver, subject, message_user) {
     subject: `${subject}`,
     text: `${message_user}`,
   };
-  transporter.sendMail(mailOptions, (error, info) => {
+  transporter.sendMail(mailOptions, (error: Error | null, info: any) => {
     if (error) {
       console.log("Error al enviar el email", error.message);
     } else {
@@ -40,9 +47,9 @@ function main() {
       message: "Introduce tu token de seguridad: ",
     },
   ]).then((answers) => {
-    if(!validator.isEmail(answers.email)) {
-        console.log("El email ingresado no es correcto");
-        return;
+    if (!validator.isEmail(answers.email)) {
+      console.log("El email ingresado no es correcto");
+      return;
     }
     saveData(answers.email, answers.token);
     const transporter = nodemailer.createTransport({
@@ -65,11 +72,16 @@ function main() {
           { type: "input", name: "message", message: "Introduce el mensaje: " },
         ])
           .then((answers) => {
-            if(!validator.isEmail(answers.receiver)) {
-                console.log("El email ingresado no es correcto");
-                return;
+            if (!validator.isEmail(answers.receiver)) {
+              console.log("El email ingresado no es correcto");
+              return;
             }
-            sendEmail(transporter, answers.receiver, answers.subject, answers.message);
+            sendEmail(
+              transporter,
+              answers.receiver,
+              answers.subject,
+              answers.message
+            );
           })
           .catch((err) => {
             console.log(
