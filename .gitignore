@@ -1,4 +1,2 @@
+src/**/*.js
 node_modules/
-*.js
-*:js.map
-dist/
