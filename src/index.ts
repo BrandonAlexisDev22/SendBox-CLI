@@ -38,6 +38,23 @@ function sendEmail(
   });
 }
 
+async function verifyToken(email:string, token:string): Promise<boolean>{
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user:email,
+      pass:token,
+    },
+  });
+
+  try {
+    await transporter.verify();
+    return true
+  } catch(error) {
+    return false;
+  }
+}
+
 function main() {
   prompt([
     { type: "input", name: "email", message: "Introduce tu email: " },
